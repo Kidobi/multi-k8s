@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: database-persistent-volume-claim
+# if this claim gets attached to a pod, then Kubernetes will needs to find an
+# instance of storage that meets the below requirement
+spec:
+  # Access Modes:
+  # ReadWriteOnce - only one node can read/write to this
+  # ReadOnlyMany - multiple nodes can read from this
+  # ReadWritemany - multiple nodes can read/write to this
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi

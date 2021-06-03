@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: worker
+  template:
+    metadata:
+      labels:
+        component: worker
+    spec:
+      containers:
+      - name: worker
+        image: stephengrider/multi-worker
+        # specify environment variables to pass to the container
+        env:
+        - name: REDIS_HOST
+          # hostname for the redis pod is just the "name" attribute for the ClusterIP service sitting in front of it
+          value: redis-cluster-ip-service
+        - name: REDIS_PORT
+          value: '6379'
+      # NOTE: there is no port specified because nothing needs to connect into worker
+      # NOTE2: IT ALSO DOES NOT NEED A SERVICE CREATED FOR IT
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "50m"

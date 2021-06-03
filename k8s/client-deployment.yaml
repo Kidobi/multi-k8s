@@ -1,0 +1,29 @@
+# deployments are only available in apiVersion "apps/v1"
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+spec:
+  # specifies number of identical pods this deployment will make
+  replicas: 1
+  # this is similar to service config selector. It basically says this deployment applies to pods with
+  # the "component: web" label. This is useful when updating a deployment that already contains pods
+  selector:
+    matchLabels:
+      component: web
+  # pod configurations go into the "template" section (syntax here is basically same as pod config)
+  template:
+    metadata:
+      labels:
+        component: web
+    spec:
+      containers:
+        - name: client
+          image: stephengrider/multi-client
+          ports:
+            - containerPort: 3000
+          # the below limits are not part of the course instructions, but VSCode K8 module will complain about missing this
+          resources:
+            limits:
+              memory: "32Mi"
+              cpu: "50m"

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cluster-ip-service
+spec:
+  # NOTE: ClusterIP is default service type, so the below line is optional
+  type: ClusterIP
+  selector:
+    component: redis
+  ports:
+  # default redis port
+  - port: 6379
+    targetPort: 6379

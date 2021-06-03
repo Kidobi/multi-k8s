@@ -1,0 +1,11 @@
+# this server connects to redis/postgres and does most of the actual work
+
+FROM node:14.14.0-alpine
+WORKDIR '/app'
+COPY ./package.json ./
+RUN npm install
+COPY ./ ./
+
+# NOTE: run dev is to execute the "dev" script in package.json which launches nodemon,
+# which monitors for code changes
+CMD ["npm", "run", "dev"]

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: server
+  template:
+    metadata:
+      labels:
+        component: server
+    spec:
+      containers:
+      - name: server
+        image: stephengrider/multi-server
+        ports:
+        - containerPort: 5000
+        # environment variables to pass to container
+        env:
+        - name: REDIS_HOST
+          value: redis-cluster-ip-service
+        - name: REDIS_PORT
+          value: '6379'
+        - name: PGUSER
+          value: postgres
+        - name: PGHOST
+          value: postgres-cluster-ip-service
+        - name: PGPORT
+          value: '5432'
+        - name: PGDATABASE
+          value: postgres
+        # the server will be looking for a "PGPASSWORD" environment variable
+        - name: PGPASSWORD
+          # value is coming from the secret object we created
+          valueFrom:
+            secretKeyRef:
+              # the name of the secret object we created
+              # kubectl create secret generic pgpassword --from-literal PGPASSWORD=12345asdf
+              name: pgpassword
+              # the name of the key we stored in here
+              # NOTE: we created a key/value pair of PGPASSWORD=12345asdf.
+              # we put the key value here in the config file to hide the pw value
+              key: PGPASSWORD
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "100m"

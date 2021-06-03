@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: postgres
+  template:
+    metadata:
+      labels:
+        component: postgres
+    spec:
+      # here, we configure a persistent volume for our postgres container
+      # the claim is defined in database-persistent-volume-claim.yaml
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: database-persistent-volume-claim
+      containers:
+      - name: postgres
+        # default docker hub postgres image
+        image: postgres
+        ports:
+        - containerPort: 5432
+        # once the volume is defined above, we now need to define how it's mounted in the container
+        volumeMounts:
+          # name matches the volume name above
+        - name: postgres-storage
+          # the location in the container that this volume is mounted.
+          mountPath: /var/lib/postgresql/data
+          # the below is specific to postgres to get it working.
+          # essentially, this is mapping the location where data will be stored
+          # on the PVC. So anything stored in the mountPath above, will show up
+          # in the subPath below when viewed directly on PVC
+          subPath: postgres
+        env:
+        # postgres imgae expects a POSTGRES_PASSWORD env variable if we want to
+        # overwrite the default pw with our own secret valye
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              # name of the secret we created imperatively
+              name: pgpassword
+              # "key" for the key=value pair we created that contains the secret value
+              key: PGPASSWORD
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+
