@@ -41,7 +41,7 @@ before_install:
   # authenticate (with the decrypted service-account.json file)
   - gcloud auth activate-service-account --key-file service-account.json
   # select to GCloud project to do work on (use project id, not the name)
-  - gcloud set project abiding-cistern-315717
+  - gcloud config set project abiding-cistern-315717
   # select the region where your k8 cluster is located
   - gcloud config set compute/zone northamerica-northeast1-a
   # configure gcloud to work with our "multi-cluster" k8s cluster we created in GUI
