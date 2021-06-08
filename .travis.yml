@@ -49,7 +49,7 @@ before_install:
   # login to docker hub (the username/pw we will pass into Travis as env variables)
   
   # STEP 3
-  - eho "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   
   # STEP 4
   - docker build -t kidobi/react-test -f ./client/Dockerfile.dev ./client
